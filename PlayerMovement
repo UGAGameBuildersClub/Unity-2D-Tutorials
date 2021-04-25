@@ -6,6 +6,7 @@ public class MovementScript : MonoBehaviour
 {
     public Vector2 speed = new Vector2(5f,2f);
     Vector2 targetPosition, relativePosition, movement;
+    int coinsCollected = 0;
 
     void Update()
     {
@@ -56,6 +57,13 @@ public class MovementScript : MonoBehaviour
 
         GetComponent<Rigidbody2D>().velocity = movement;
     }
+    
+    void OnTriggerEnter2D(Collider2D other) 
+    {
+        if (other.gameObject.CompareTag("Coin")) 
+        {
+            coinsCollected += 1;
+            Debug.Log("Coins collected: " + coinsCollected);
+        }
+    }
 }
-
-
