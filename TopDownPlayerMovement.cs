@@ -58,12 +58,4 @@ public class TopDownPlayerMovement : MonoBehaviour
         GetComponent<Rigidbody2D>().velocity = movement;
     }
     
-    void OnTriggerEnter2D(Collider2D other) 
-    {
-        if (other.gameObject.CompareTag("Coin")) 
-        {
-            coinsCollected += 1;
-            Debug.Log("Coins collected: " + coinsCollected);
-        }
-    }
 }
