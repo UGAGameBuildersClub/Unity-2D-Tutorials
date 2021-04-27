@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class TopDownPlayerMovement : MonoBehaviour
 {
     public Vector2 speed = new Vector2(5f,2f);
     Vector2 targetPosition, relativePosition, movement;
