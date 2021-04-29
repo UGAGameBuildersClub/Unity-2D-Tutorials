@@ -98,7 +98,7 @@ public class PlatformerPlayerMovement : MonoBehaviour
         if (other.gameObject.CompareTag("Platform"))
         {
             isGrounded = true;
-            moveDirection.y = 1;
+            jumpTime = 0;
         }
     }
 }
