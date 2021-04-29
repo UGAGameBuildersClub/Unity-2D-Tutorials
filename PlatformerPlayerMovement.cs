@@ -8,13 +8,13 @@ public class PlatformerPlayerMovement : MonoBehaviour
     // Move player in 2D space
     public Vector2 speed = new Vector2(3f,6f);
     public float gravityScale = 1.5f;
-    public float jumpTime = .2f;
+    public float maxJumpTime = .2f;
 
     int coinsCollected = 0;
     bool isGrounded;
     bool isFalling = true;
     Vector2 movement,moveDirection;
-    float timeUp;
+    float jumpTime;
 
     // Update is called once per frame
     void Update()
@@ -36,7 +36,7 @@ public class PlatformerPlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && isGrounded) 
         {
-            timeUp = 0;
+            jumpTime = 0;
             isGrounded = false;
             isFalling = false;
         }
@@ -47,7 +47,7 @@ public class PlatformerPlayerMovement : MonoBehaviour
 
     void Jump() 
     {
-        if (timeUp == jumpTime) //reached max jump height
+        if (jumpTime == maxJumpTime) //reached max jump height
         {
             isFalling = true;
         }
@@ -56,13 +56,13 @@ public class PlatformerPlayerMovement : MonoBehaviour
         {
             if (!isFalling)
             {
-                moveDirection.y = gravityScale * (jumpTime - timeUp);
-                timeUp += Time.deltaTime;
+                moveDirection.y = gravityScale * (maxJumpTime - jumpTime);
+                jumpTime += Time.deltaTime;
             }
             else //isGrounded = false and isFalling = true
             {
-                moveDirection.y = -gravityScale * (jumpTime - timeUp);
-                timeUp -= Time.deltaTime;
+                moveDirection.y = -gravityScale * (maxJumpTime - jumpTime);
+                jumpTime -= Time.deltaTime;
             }
         }
         else //isGrounded = true
@@ -95,7 +95,7 @@ public class PlatformerPlayerMovement : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other) 
     {
         // On Ground
-        if (other.gameObject.CompareTag("Ground"))
+        if (other.gameObject.CompareTag("Platform"))
         {
             isGrounded = true;
             moveDirection.y = 1;
