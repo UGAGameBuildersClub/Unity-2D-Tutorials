@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlatformerPlayerMovement : MonoBehaviour
+public class PlatformerPlayerMovementScript : MonoBehaviour
 {
-    // Move player in 2D space
     public Vector2 speed = new Vector2(3f,6f);
     public float gravityScale = 1.5f;
     public float maxJumpTime = .2f;
+    public GameObject respawn;
 
     int coinsCollected = 0;
     bool isGrounded;
     bool isFalling = true;
-    Vector2 movement,moveDirection;
+    Vector2 movement, moveDirection;
     float jumpTime;
 
     // Update is called once per frame
     void Update()
     {
-        //Horizontal Movement
         if (Input.GetAxis("Horizontal") < 0)
         {
             moveDirection.x = -1;
@@ -40,6 +39,7 @@ public class PlatformerPlayerMovement : MonoBehaviour
             isGrounded = false;
             isFalling = false;
         }
+
         Jump();
 
         movement.y = moveDirection.y * speed.y;
@@ -47,7 +47,7 @@ public class PlatformerPlayerMovement : MonoBehaviour
 
     void Jump() 
     {
-        if (jumpTime == maxJumpTime) //reached max jump height
+        if (jumpTime == maxJumpTime) 
         {
             isFalling = true;
         }
@@ -59,43 +59,55 @@ public class PlatformerPlayerMovement : MonoBehaviour
                 moveDirection.y = gravityScale * (maxJumpTime - jumpTime);
                 jumpTime += Time.deltaTime;
             }
-            else //isGrounded = false and isFalling = true
+            else
             {
                 moveDirection.y = -gravityScale * (maxJumpTime - jumpTime);
                 jumpTime -= Time.deltaTime;
             }
         }
-        else //isGrounded = true
+        else 
         {
             moveDirection.y = 0;
         }
     }
 
-    void FixedUpdate()
+    void FixedUpdate() 
     {
         GetComponent<Rigidbody2D>().velocity = movement;
     }
 
     void OnTriggerEnter2D(Collider2D other) 
     {
-        // Coin
+        //Coin
         if (other.gameObject.CompareTag("Coin")) 
         {
             coinsCollected += 1;
-            Debug.Log("Coins Collected: " + coinsCollected);
+            Debug.Log("Coins Collect: " + coinsCollected);
         }
 
-        if (other.gameObject.CompareTag("Finish")) 
+        if (other.gameObject.CompareTag("Portal")) 
         {
             Debug.Log("Changing Scene");
-            SceneManager.LoadScene("GoodEnd");
+            if (coinsCollected == 3)
+            {
+                SceneManager.LoadScene("GoodEnd");
+            }
+            else
+            {
+                SceneManager.LoadScene("End"); 
+            }
+        }
+
+        if (other.gameObject.CompareTag("Death")) 
+        {
+            Debug.Log("Respawn");
+            transform.position = respawn.transform.position;
         }
     }
 
     void OnCollisionEnter2D(Collision2D other) 
     {
-        // On Ground
-        if (other.gameObject.CompareTag("Platform"))
+        if (other.gameObject.CompareTag("Platform")) 
         {
             isGrounded = true;
             jumpTime = 0;
