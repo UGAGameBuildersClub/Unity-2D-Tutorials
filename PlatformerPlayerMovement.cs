@@ -67,7 +67,6 @@ public class PlatformerMovementScript : MonoBehaviour
             //play the jump animation
             anim.SetBool("isJumping", true);
             //reset everything for the jump method
-            isJumping = true;
             jumpTime = 0;
             isGrounded = false;
             isFalling = false;
@@ -163,7 +162,6 @@ public class PlatformerMovementScript : MonoBehaviour
         //it was the ground
         if (other.gameObject.CompareTag("Platform")) 
         {
-            isJumping = false;
             isGrounded = true;
             jumpTime = 0;
             anim.SetBool("isJumping",false);
