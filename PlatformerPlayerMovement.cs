@@ -54,7 +54,7 @@ public class PlatformerMovementScript : MonoBehaviour
             //movement is zero
             moveDirection.x = 0;
             //do not play the running animation
-            isRunning = false;
+            anim.SetBool("isRunning",false);
         }
 
         //move in the x direction with the speed and direction specified
