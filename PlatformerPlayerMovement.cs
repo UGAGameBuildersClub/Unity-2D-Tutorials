@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlatformerMovementScript : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class PlatformerMovementScript : MonoBehaviour
 
     //component for animations
     public Animator anim;
+
+    //UI component of lives text
+    public Text livesNum;
+    public Text coinsNum;
 
     //respawn transform
     public GameObject respawn;
@@ -24,6 +29,9 @@ public class PlatformerMovementScript : MonoBehaviour
     bool isFalling = true;
     Vector2 movement, moveDirection;
     float jumpTime;
+
+    //number of lives
+    int lives = 3;
 
     //Update is called once per frame
     void Update()
@@ -77,6 +85,13 @@ public class PlatformerMovementScript : MonoBehaviour
 
         //move in the y direction with speed and direction specified
         movement.y = moveDirection.y * speed.y;
+
+        if (lives == 0) 
+        {
+            transform.position = respawn.transform.position;
+            lives = 3;
+            livesNum.text = "" + lives;
+        }
     }
 
     void Jump() 
@@ -132,6 +147,7 @@ public class PlatformerMovementScript : MonoBehaviour
             coinsCollected += 1;
             Debug.Log("Coins Collect: " + coinsCollected);
             Destroy(other.gameObject);
+            coinsNum.text = "" + coinsCollected;
         }
 
         //it was a portal
@@ -151,9 +167,15 @@ public class PlatformerMovementScript : MonoBehaviour
 
         if (other.gameObject.CompareTag("Death")) 
         {
-            Debug.Log("Respawn");
-            transform.position = respawn.transform.position;
+            lives -= 1;
+            livesNum.text = "" + lives;
         }
+    }
+
+    //stopped hitting the ground
+    void OnCollisionExit2D(Collision2D other) 
+    {
+        isGrounded = false;
     }
 
     //bumped into a wall or the ground
