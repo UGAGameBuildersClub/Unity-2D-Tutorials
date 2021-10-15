@@ -1,0 +1,61 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EnemyScript : MonoBehaviour
+{
+    public int damage = 1, health = 5;             //damage this enemy deals and its health, with default values
+    public Vector2 speed = new Vector2(.5f, .25f); //speed, can be accessed in inspector
+    public bool living;                            //is this player living or inanimate
+
+    Vector2 relativePosition, movement, targetPosition; //where enemy is relative to player, movement necessary, players position
+
+    //this is called once per frame
+    void Update()
+    {
+        targetPosition = GameObject.FindWithTag("Player").transform.position; //find where the player is
+
+        //find our position relative to the player
+        relativePosition = new Vector2
+            (targetPosition.x - gameObject.transform.position.x,
+            targetPosition.y - gameObject.transform.position.y);
+
+    }
+
+    //this adjusts how many times its called per frame
+    void FixedUpdate()
+    {
+        if (living) //if we aren't inanimate
+        { 
+            //go read the player script for details
+            if (speed.x * Time.deltaTime >= Mathf.Abs(relativePosition.x))
+            {
+                movement.x = relativePosition.x;
+            }
+            else
+            {
+                movement.x = speed.x * Mathf.Sign(relativePosition.x);
+            }
+            if (speed.y * Time.deltaTime >= Mathf.Abs(relativePosition.y))
+            {
+                movement.y = relativePosition.y;
+            }
+            else
+            {
+                movement.y = speed.y * Mathf.Sign(relativePosition.y);
+            }
+
+            GetComponent<Rigidbody2D>().velocity = movement;
+        }
+    }
+
+    public void Begone() //this is a destructor. it destroys this object when called
+    {
+        Destroy(gameObject);
+    }
+
+    public int GetHurt() //this returns how much damage we deal
+    {
+        return damage;
+    }
+}
