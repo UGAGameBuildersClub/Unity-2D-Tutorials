@@ -6,7 +6,7 @@ public class TopDownPlayerMovement : MonoBehaviour
 {
     public Vector2 speed = new Vector2(5f, 2f);          //change this to make player faster. public = visible on component screen
     Vector2 targetPosition, relativePosition, movement;  //keep track of where player is/should be/is going in form (x,y)
-    int coinsCollected = 0, keyNum = 0;                  //numbers of coins and keys collected. start at 0
+    int coinsCollected = 0, keyNum = 0, hp = 3;          //numbers of coins and keys found, and hit points. have default values
     bool canInput = true, torch = false;                 //can the player move now? do they have the torch?
 
     // Update is called once per frame
@@ -45,27 +45,37 @@ public class TopDownPlayerMovement : MonoBehaviour
     //called once, many, or none times a frame
     void FixedUpdate()
     {
-        if (speed.x * Time.deltaTime >= Mathf.Abs(relativePosition.x)) //if we're about to overshoot
+        if (hp <= 0) //if we are dead
         {
-            movement.x = relativePosition.x; //just go where we need to go
-        }
-        else //otherwise
-        {
-            movement.x = speed.x * Mathf.Sign(relativePosition.x); //move one distance unit away
-        }
-
-        //same thing but in y direction
-        if (speed.y * Time.deltaTime >= Mathf.Abs(relativePosition.y))
-        {
-            movement.y = relativePosition.y;
+            canInput = false; //stop the input
+            transform.position = GameObject.FindWithTag("Respawn").transform.position; //go to the nearest respawn point
+            hp = 3; //RESET THE HEALTH
+            canInput = true; //RESET INPUT!!!!
         }
         else
         {
-            movement.y = speed.y * Mathf.Sign(relativePosition.y);
-        }
+            if (speed.x * Time.deltaTime >= Mathf.Abs(relativePosition.x)) //if we're about to overshoot
+            {
+                movement.x = relativePosition.x; //just go where we need to go
+            }
+            else //otherwise
+            {
+                movement.x = speed.x * Mathf.Sign(relativePosition.x); //move one distance unit away
+            }
 
-        //set our movement to the calculated movement
-        GetComponent<Rigidbody2D>().velocity = movement;
+            //same thing but in y direction
+            if (speed.y * Time.deltaTime >= Mathf.Abs(relativePosition.y))
+            {
+                movement.y = relativePosition.y;
+            }
+            else
+            {
+                movement.y = speed.y * Mathf.Sign(relativePosition.y);
+            }
+
+            //set our movement to the calculated movement
+            GetComponent<Rigidbody2D>().velocity = movement;
+        }
     }
 
     //oh no! we hit a TRIGGER collider
@@ -138,6 +148,13 @@ public class TopDownPlayerMovement : MonoBehaviour
             Destroy(other.gameObject); //destroy the door
             keyNum--; //remove a key
             Debug.Log("opened door"); //say what happened
+        }
+        else if (other.gameObject.CompareTag("Ow")) //if we hit an enemy/spikepit
+        {
+            //find the script that the enemy and call the getter method
+            //to tell us how much to reduce health by
+            hp -= other.gameObject.GetComponent<EnemyScript>().GetHurt();
+            Debug.Log("hp = " + hp); //print out missing health
         }
     }
 
