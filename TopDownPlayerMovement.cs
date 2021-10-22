@@ -92,36 +92,47 @@ public class TopDownPlayerMovement : MonoBehaviour
         //this is the camera stuff. follows this format
         //if i hit this edge, stop player input. move the camera in
         //the right direction. turn player input back on.
-        if (other.gameObject.CompareTag("Left Edge")) 
+        //also finds the new respawn point
+        if (other.gameObject.CompareTag("Left Edge"))
         {
             canInput = false;
 
-            Camera.main.transform.Translate(-19.5f,0f,0f);
+            Camera.main.transform.Translate(-19.5f, 0f, 0f);
+
+            FindNewRespawnPoint("Right Edge");
 
             canInput = true;
         }
-        if (other.gameObject.CompareTag("Right Edge"))
+
+        else if (other.gameObject.CompareTag("Right Edge"))
         {
             canInput = false;
 
             Camera.main.transform.Translate(19.5f, 0f, 0f);
 
-            canInput = true;
-        }
-        if (other.gameObject.CompareTag("Down Edge"))
-        {
-            canInput = false;
-
-            Camera.main.transform.Translate(0f, -8.5f, 0f);
+            FindNewRespawnPoint("Left Edge");
 
             canInput = true;
         }
-        if (other.gameObject.CompareTag("Up Edge"))
+
+        else if (other.gameObject.CompareTag("Up Edge"))
         {
             canInput = false;
 
             Camera.main.transform.Translate(0f, 8.5f, 0f);
 
+            FindNewRespawnPoint("Down Edge");
+
+            canInput = true;
+        }
+
+        else if (other.gameObject.CompareTag("Down Edge"))
+        {
+            canInput = false;
+
+            Camera.main.transform.Translate(0f, -8.5f, 0f);
+
+            FindNewRespawnPoint("Up Edge");
             canInput = true;
         }
 
@@ -162,5 +173,23 @@ public class TopDownPlayerMovement : MonoBehaviour
     public bool GetTorch()
     {
         return torch;
+    }
+
+    // untag the old respawn point and tag the new respawn point
+    public void FindNewRespawnPoint(string edge)
+    {
+        GameObject temp, temp2;
+
+        //find the old respawn point
+        temp = GameObject.FindWithTag("Respawn");
+        //untag it
+        temp.tag = "Untagged";
+
+        //find the edge that we need to now respawn from
+        temp = GameObject.FindWithTag(edge);
+        //find the new respawn point
+        temp2 = temp.transform.Find("Respawn").gameObject;
+        //tag it
+        temp2.tag = "Respawn";
     }
 }
